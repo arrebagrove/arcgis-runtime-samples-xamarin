@@ -210,5 +210,4 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayLayerViewState
             LayerViewStatus = layerStatus;
         }
     }
-
 }

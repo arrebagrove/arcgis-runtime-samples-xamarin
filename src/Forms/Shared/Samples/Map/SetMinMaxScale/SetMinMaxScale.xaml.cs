@@ -20,7 +20,13 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
             InitializeComponent ();
 
             Title = "Set Min & Max Scale";
+            
+            // Create the UI, setup the control references and execute initialization 
+            Initialize();
+        }
 
+        private void Initialize()
+        {
             // Create new Map with Streets basemap 
             Map myMap = new Map(Basemap.CreateStreets());
 

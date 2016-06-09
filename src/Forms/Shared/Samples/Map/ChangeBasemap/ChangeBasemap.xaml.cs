@@ -23,6 +23,7 @@ namespace ArcGISRuntimeXamarin.Samples.ChangeBasemap
             "Imagery",
             "Ocean"
         };
+
         public ChangeBasemap ()
         {
             InitializeComponent ();
@@ -75,7 +76,7 @@ namespace ArcGISRuntimeXamarin.Samples.ChangeBasemap
 
         private void Initialize()
         {
-            // Create new Map with basemap and initial location
+            // Create new Map with basemap
             Map myMap = new Map(Basemap.CreateTopographic());
 
             // Assign the map to the MapView

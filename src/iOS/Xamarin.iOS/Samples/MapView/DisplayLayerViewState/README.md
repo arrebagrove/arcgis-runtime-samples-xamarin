@@ -1,4 +1,4 @@
-#Display Layer View State
+#Display layer view state
 
 This sample demonstrates how to get view status for layers in a map.
 

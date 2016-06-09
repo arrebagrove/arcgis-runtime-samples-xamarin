@@ -10,9 +10,6 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-// Define compile attribute, read more about it from 
-// https://developer.xamarin.com/guides/xamarin-forms/user-interface/xaml-basics/xamlc/
-[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace ArcGISRuntimeXamarin
 {
     public class App : Application
