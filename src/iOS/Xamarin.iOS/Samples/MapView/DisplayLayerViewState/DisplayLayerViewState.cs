@@ -109,7 +109,7 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayLayerViewState
             // If it exists then update the status
             var model = _layerStatusModels.FirstOrDefault(l => l.LayerName == e.Layer.Name);
             if (model != null)
-                model.LayerViewStatus = e.LayerViewState.ToString();
+                model.LayerViewStatus = e.LayerViewState.Status.ToString();
 
             // Update the table
             _tableView.ReloadData();
