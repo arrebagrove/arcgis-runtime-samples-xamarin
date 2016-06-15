@@ -31,6 +31,7 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDeviceLocation
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
             // Create the UI, setup the control references and execute initialization 
             CreateLayout();
             Initialize();
@@ -40,12 +41,6 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDeviceLocation
         {
             // Create new Map with basemap
             Map myMap = new Map(Basemap.CreateImagery());
-
-            // Create a mappoint the map should zoom to
-            MapPoint mapPoint = new MapPoint(-13630484, 4545415, SpatialReferences.WebMercator);
-
-            // Set the initial viewpoint for map
-            myMap.InitialViewpoint = new Viewpoint(mapPoint, 90000);
 
             // Provide used Map to the MapView
             _myMapView.Map = myMap;
@@ -68,26 +63,37 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDeviceLocation
                     {
                         // Starts location display with auto pan mode set to Off
                         _myMapView.LocationDisplay.AutoPanMode = LocationDisplayAutoPanMode.Off;
-                        _myMapView.LocationDisplay.Start();
-
+                        
+                        //TODO Remove this IsStarted check https://github.com/Esri/arcgis-runtime-samples-xamarin/issues/182
+                        if (!_myMapView.LocationDisplay.IsStarted)
+                            _myMapView.LocationDisplay.Start();
                     }));
                     actionSheetAlert.AddAction(UIAlertAction.Create("Re-center", UIAlertActionStyle.Default, (action) =>
                     {
                         // Starts location display with auto pan mode set to Default
                         _myMapView.LocationDisplay.AutoPanMode = LocationDisplayAutoPanMode.Recenter;
-                        _myMapView.LocationDisplay.Start();
+
+                        //TODO Remove this IsStarted check https://github.com/Esri/arcgis-runtime-samples-xamarin/issues/182
+                        if (!_myMapView.LocationDisplay.IsStarted)
+                            _myMapView.LocationDisplay.Start();
                     }));
                     actionSheetAlert.AddAction(UIAlertAction.Create("Navigation", UIAlertActionStyle.Default, (action) =>
                     {
                         // Starts location display with auto pan mode set to Navigation
                         _myMapView.LocationDisplay.AutoPanMode = LocationDisplayAutoPanMode.Navigation;
-                        _myMapView.LocationDisplay.Start();
+
+                        //TODO Remove this IsStarted check https://github.com/Esri/arcgis-runtime-samples-xamarin/issues/182
+                        if (!_myMapView.LocationDisplay.IsStarted)
+                            _myMapView.LocationDisplay.Start();
                     }));
                     actionSheetAlert.AddAction(UIAlertAction.Create("Compass", UIAlertActionStyle.Default, (action) =>
                     {
                         // Starts location display with auto pan mode set to Compass Navigation
                         _myMapView.LocationDisplay.AutoPanMode = LocationDisplayAutoPanMode.CompassNavigation;
-                         _myMapView.LocationDisplay.Start();
+
+                        //TODO Remove this IsStarted check https://github.com/Esri/arcgis-runtime-samples-xamarin/issues/182
+                        if (!_myMapView.LocationDisplay.IsStarted)
+                            _myMapView.LocationDisplay.Start();
                     }));
                 //present action sheet
                 PresentViewController(actionSheetAlert, true, null);                                    

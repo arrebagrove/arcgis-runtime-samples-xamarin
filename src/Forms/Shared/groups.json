@@ -7,7 +7,7 @@
         {
           "Name":"MapView",
           "SubCategoryName":"MapView",
-          "ShowGroup":false,
+          "ShowGroup":true,
           "SampleInfos":[
             {
               "SampleName":"ShowMagnifier",
@@ -30,7 +30,7 @@
         {
           "Name":"Map",
           "SubCategoryName":"Map",
-          "ShowGroup":false,
+          "ShowGroup":true,
           "SampleInfos":[
             {
               "SampleName":"DisplayMap",
@@ -75,7 +75,7 @@
         {
           "Name":"Tiled Layers",
           "SubCategoryName":"ArcGISTiledLayer",
-          "ShowGroup":false,
+          "ShowGroup":true,
           "SampleInfos":[
             {
               "SampleName":"ArcGISTiledLayerUrl",
@@ -86,7 +86,7 @@
         {
           "Name":"Map Image Layers",
           "SubCategoryName":"ArcGISMapImageLayer",
-          "ShowGroup":false,
+          "ShowGroup":true,
           "SampleInfos":[
             {
               "SampleName": "ArcGISMapImageLayerUrl",
@@ -107,7 +107,7 @@
         {
           "Name": "Feature Layers",
           "SubCategoryName": "FeatureLayers",
-          "ShowGroup": false,
+          "ShowGroup": true,
           "SampleInfos": [
             {
               "SampleName": "FeatureLayerUrl",
@@ -130,7 +130,7 @@
         {
           "Name":"Feature Tables",
           "SubCategoryName":"FeatureTables",
-          "ShowGroup":false,
+          "ShowGroup":true,
           "SampleInfos": [
              {
               "SampleName":"ServiceFeatureTableCache",
@@ -153,14 +153,14 @@
       ]
     },
     {
-      "Name":"Display Information",
-      "CategoryName":"DisplayInformation",
-      "SubCategories":[
+      "Name": "Display Information",
+      "CategoryName": "DisplayInformation",
+      "SubCategories": [
         {
-          "Name":"Graphics Overlays",
-          "SubCategoryName":"GraphicsOverlay",
-          "ShowGroup":false,
-          "SampleInfos":[
+          "Name": "Graphics Overlays",
+          "SubCategoryName": "GraphicsOverlay",
+          "ShowGroup": true,
+          "SampleInfos": [
             {
               "SampleName": "AddGraphicsRenderer",
               "Path": "Samples/GraphicsOverlay/AddGraphicsRenderer"
@@ -172,10 +172,10 @@
           ]
         },
         {
-          "Name":"Symbology",
-          "SubCategoryName":"Symbology",
-          "ShowGroup":false,
-          "SampleInfos":[
+          "Name": "Symbology",
+          "SubCategoryName": "Symbology",
+          "ShowGroup": true,
+          "SampleInfos": [
             {
               "SampleName": "RenderSimpleMarkers",
               "Path": "Samples/Symbology/RenderSimpleMarkers"
@@ -187,6 +187,23 @@
             {
               "SampleName": "RenderUniqueValues",
               "Path": "Samples/Symbology/RenderUniqueValues"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Name": "Location",
+      "CategoryName": "Location",
+      "SubCategories": [
+        {
+          "Name": "Display Location",
+          "SubCategoryName": "DisplayLocation",
+          "ShowGroup": true,
+          "SampleInfos": [
+            {
+              "SampleName": "DisplayDeviceLocation",
+              "Path": "Samples/Location/DisplayDeviceLocation"
             }
           ]
         }
