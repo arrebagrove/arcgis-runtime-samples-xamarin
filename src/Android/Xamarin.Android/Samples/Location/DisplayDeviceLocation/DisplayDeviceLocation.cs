@@ -122,7 +122,6 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDeviceLocation
                     if (!_myMapView.LocationDisplay.IsStarted)
                         _myMapView.LocationDisplay.Start();
                     break;
-
             }
         }
 
