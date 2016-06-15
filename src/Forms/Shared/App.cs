@@ -8,7 +8,6 @@
 // language governing permissions and limitations under the License.
 
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace ArcGISRuntimeXamarin
 {

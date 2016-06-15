@@ -20,6 +20,10 @@
             {
               "SampleName": "DisplayDrawingStatus",
               "Path": "Samples/MapView/DisplayDrawingStatus"
+            },
+             {
+              "SampleName":"TakeScreenshot",
+              "Path":"Samples/MapView/TakeScreenshot"
             }
           ]
         },

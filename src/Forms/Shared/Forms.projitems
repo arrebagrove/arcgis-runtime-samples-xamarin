@@ -91,6 +91,10 @@
       <SubType>Code</SubType>
       <DependentUpon>DisplayDrawingStatus.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Samples\MapView\TakeScreenshot\TakeScreenshot.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TakeScreenshot.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Samples\MapView\MapRotation\MapRotation.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>MapRotation.xaml</DependentUpon>
@@ -233,6 +237,13 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\MapView\DisplayDrawingStatus\metadata.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\MapView\TakeScreenshot\TakeScreenshot.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\MapView\TakeScreenshot\TakeScreenshot.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\MapView\TakeScreenshot\metadata.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\MapView\MapRotation\MapRotation.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
