@@ -48,7 +48,9 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDeviceLocation
 
         private void OnStopButtonClicked(object sender, EventArgs e)
         {
-            _myMapView.LocationDisplay.Stop();
+            //TODO Remove this IsStarted check https://github.com/Esri/arcgis-runtime-samples-xamarin/issues/182
+            if (_myMapView.LocationDisplay.IsStarted)
+                _myMapView.LocationDisplay.Stop();
         }
 
         private void OnStartButtonClicked(object sender, EventArgs e)
