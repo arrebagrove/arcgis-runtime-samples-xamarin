@@ -21,6 +21,9 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
         // Constant holding offset where the MapView control should start
         private const int yPageOffset = 60;
 
+        // Create and hold reference to the used MapView
+        private MapView _myMapView = new MapView();
+
         public SetMinMaxScale()
         {
             Title = "Set Min & Max Scale";
@@ -29,7 +32,14 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+           
+            // Create the UI, setup the control references and execute initialization 
+            CreateLayout();
+            Initialize();
+        }
 
+        private void Initialize()
+        {
             // Create new Map with Streets basemap 
             Map myMap = new Map(Basemap.CreateStreets());
 
@@ -39,13 +49,6 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
             myMap.MinScale = 8000;
             myMap.MaxScale = 2000;
 
-            // Create a new MapView control and provide its location coordinates on the frame
-            MapView myMapView = new MapView()
-            {
-                Frame = new CoreGraphics.CGRect(0, yPageOffset, View.Bounds.Width, View.Bounds.Height - yPageOffset)
-            };
-            myMapView.Map = myMap;
-
             // Create central point where map is centered
             MapPoint centralPoint = new MapPoint(-355453, 7548720, SpatialReferences.WebMercator);
 
@@ -53,12 +56,21 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
             Viewpoint startingViewpoint = new Viewpoint(
                 centralPoint,
                 3000);
-
             // Set starting viewpoint
-            myMapView.SetViewpoint(startingViewpoint);
+            myMap.InitialViewpoint = startingViewpoint;
+
+            // Set map to mapview
+            _myMapView.Map = myMap;
+        }
+
+        private void CreateLayout()
+        {
+            // Setup the visual frame for the MapView
+            _myMapView.Frame = new CoreGraphics.CGRect(
+                0, yPageOffset, View.Bounds.Width, View.Bounds.Height - yPageOffset);
 
             // Add MapView to the page
-            View.AddSubviews(myMapView);
+            View.AddSubviews(_myMapView);
         }
     }
 }

@@ -19,12 +19,22 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
     [Activity]
     public class SetMinMaxScale : Activity
     {
+        // Create and hold reference to the used MapView
+        private MapView _myMapView = new MapView();
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             Title = "Set Min & Max Scale";
 
+            // Create the UI, setup the control references and execute initialization 
+            CreateLayout();
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             // Create new Map with Streets basemap 
             Map myMap = new Map(Basemap.CreateStreets());
 
@@ -34,10 +44,6 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
             myMap.MinScale = 8000;
             myMap.MaxScale = 2000;
 
-            // Create a new map view control to display the map
-            MapView myMapView = new MapView();
-            myMapView.Map = myMap;
-
             // Create central point where map is centered
             MapPoint centralPoint = new MapPoint(-355453, 7548720, SpatialReferences.WebMercator);
 
@@ -45,15 +51,22 @@ namespace ArcGISRuntimeXamarin.Samples.SetMinMaxScale
             Viewpoint startingViewpoint = new Viewpoint(
                 centralPoint,
                 3000);
-   
             // Set starting viewpoint
-            myMapView.SetViewpoint(startingViewpoint);
+            myMap.InitialViewpoint = startingViewpoint;
 
-            // Create main layout for the UI and add MapView into it
+            // Set map to mapview
+            _myMapView.Map = myMap;
+        }
+
+        private void CreateLayout()
+        {
+            // Create a new vertical layout for the app
             var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
-            layout.AddView(myMapView);
 
-            // Apply the layout to the page
+            // Add the map view to the layout
+            layout.AddView(_myMapView);
+
+            // Show the layout in the app
             SetContentView(layout);
         }
     }
