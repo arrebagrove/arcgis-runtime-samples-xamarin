@@ -51,6 +51,10 @@
       <SubType>Code</SubType>
       <DependentUpon>IdentifyGraphics.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISVectorTiledLayerUrl\ArcGISVectorTiledLayerUrl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ArcGISVectorTiledLayerUrl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Samples\Layers\FeatureLayerDefinitionExpression\FeatureLayerDefinitionExpression.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>FeatureLayerDefinitionExpression.xaml</DependentUpon>
@@ -181,6 +185,13 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\GraphicsOverlay\IdentifyGraphics\metadata.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISVectorTiledLayerUrl\ArcGISVectorTiledLayerUrl.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISVectorTiledLayerUrl\ArcGISVectorTiledLayerUrl.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISVectorTiledLayerUrl\metadata.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\FeatureLayerDefinitionExpression\FeatureLayerDefinitionExpression.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -208,7 +219,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISTiledLayerUrl\metadata.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ArcGISMapImageLayerUrl\metadata.json" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)groups.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)groups.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\ChangeFeatureLayerRenderer\metadata.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\FeatureLayerUrl\metadata.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Samples\Layers\FeatureLayerUrl\FeatureLayerUrl.jpg">

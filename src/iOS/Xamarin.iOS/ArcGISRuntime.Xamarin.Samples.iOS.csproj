@@ -252,6 +252,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Samples\Layers\ArcGISVectorTiledLayerUrl\metadata.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -268,6 +269,7 @@
     <Compile Include="Samples\Data\ServiceFeatureTableCache\ServiceFeatureTableCache.cs" />
     <Compile Include="Samples\Data\ServiceFeatureTableManualCache\ServiceFeatureTableManualCache.cs" />
     <Compile Include="Samples\Data\ServiceFeatureTableNoCache\ServiceFeatureTableNoCache.cs" />
+    <Compile Include="Samples\Layers\ArcGISVectorTiledLayerUrl\ArcGISVectorTiledLayerUrl.cs" />
     <Compile Include="Samples\Layers\ChangeFeatureLayerRenderer\ChangeFeatureLayerRenderer.cs" />
     <Compile Include="Samples\GraphicsOverlay\IdentifyGraphics\IdentifyGraphics.cs" />
     <Compile Include="Samples\GraphicsOverlay\AddGraphicsRenderer\AddGraphicsRenderer.cs" />
@@ -310,7 +312,9 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <BundleResource Include="Samples\Layers\ArcGISTiledLayerUrl\ArcGISTiledLayerUrl.jpg" />
+    <BundleResource Include="Samples\Layers\ArcGISTiledLayerUrl\ArcGISTiledLayerUrl.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Samples\Layers\ArcGISMapImageLayerUrl\ArcGISMapImageLayerUrl.jpg" />
@@ -340,6 +344,7 @@
     <Content Include="Samples\Data\ServiceFeatureTableCache\ServiceFeatureTableCache.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <BundleResource Include="Samples\Layers\ArcGISVectorTiledLayerUrl\ArcGISVectorTiledLayerUrl.jpg" />
     <Content Include="Samples\Layers\ChangeFeatureLayerRenderer\ChangeFeatureLayerRenderer.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
