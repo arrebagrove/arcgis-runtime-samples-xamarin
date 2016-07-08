@@ -2,7 +2,6 @@
   "Name": "Display layer view state",
   "SampleName": "DisplayLayerViewState",
   "Description": "This sample demonstrates how to get view status for layers in a map.",
-  "Instructions": "",
   "Type": 0,
   "RequiresOnlineConnection":true,
   "RequiresOfflineData":false,

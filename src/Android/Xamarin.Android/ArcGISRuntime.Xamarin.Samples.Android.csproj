@@ -95,6 +95,7 @@
     <Compile Include="Samples\Location\DisplayDeviceLocation\DisplayDeviceLocation.cs" />
     <Compile Include="Samples\MapView\ChangeViewpoint\ChangeViewpoint.cs" />
     <Compile Include="Samples\MapView\DisplayDrawingStatus\DisplayDrawingStatus.cs" />
+    <Compile Include="Samples\MapView\DisplayLayerViewState\DisplayLayerViewState.cs" />
     <Compile Include="Samples\Map\AccessLoadStatus\AccessLoadStatus.cs" />
     <Compile Include="Samples\MapView\MapRotation\MapRotation.cs" />
     <Compile Include="Samples\Map\ChangeBasemap\ChangeBasemap.cs" />
@@ -156,6 +157,7 @@
     <EmbeddedResource Include="Samples\Location\DisplayDeviceLocation\metadata.json" />
     <EmbeddedResource Include="Samples\MapView\DisplayDrawingStatus\metadata.json" />
     <EmbeddedResource Include="Samples\Layers\ArcGISVectorTiledLayerUrl\metadata.json" />
+    <EmbeddedResource Include="Samples\MapView\DisplayLayerViewState\metadata.json" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\Strings.xml" />
@@ -191,6 +193,7 @@
     <Content Include="Samples\Location\DisplayDeviceLocation\DisplayDeviceLocation.jpg" />
     <Content Include="Samples\MapView\ChangeViewpoint\ChangeViewpoint.jpg" />
     <Content Include="Samples\MapView\DisplayDrawingStatus\DisplayDrawingStatus.jpg" />
+    <Content Include="Samples\MapView\DisplayLayerViewState\DisplayLayerViewState.jpg" />
     <Content Include="Samples\Map\AccessLoadStatus\AccessLoadStatus.jpg" />
     <Content Include="Samples\MapView\MapRotation\MapRotation.jpg" />
     <Content Include="Samples\Map\ChangeBasemap\ChangeBasemap.jpg" />
