@@ -1,28 +1,41 @@
-﻿// Copyright 2016 Esri.
-//
+// Copyright 2016 Esri.
+// 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 
 // "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific 
 // language governing permissions and limitations under the License.
 
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
+using Esri.ArcGISRuntime.UI;
 using System;
-using Xamarin.Forms;
+using Android.App;
+using Android.OS;
+using Android.Widget;
 
 namespace ArcGISRuntimeXamarin.Samples.DisplayLayerViewState
 {
-    public partial class DisplayLayerViewState : ContentPage
+    [Activity]
+    public class DisplayLayerViewState : Activity
     {
-        public DisplayLayerViewState()
-        {
-            InitializeComponent();
+        // Create and hold reference to the used MapView
+        private MapView _myMapView = new MapView();
 
-            Title = "Display layer view state";
+        // Controls to show status of each layers' loading
+        private TextView _TextViewTiledLayer;
+        private TextView _TextViewImageLayer;
+        private TextView _TextViewFeatureLayer;
+
+        protected override void OnCreate(Bundle bundle)
+        {
+            base.OnCreate(bundle);
+
+            Title = "Display Layer View State";
 
             // Create the UI, setup the control references and execute initialization 
+            CreateLayout();
             Initialize();
         }
 
@@ -75,10 +88,10 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayLayerViewState
             myMap.InitialViewpoint = new Viewpoint(mapPoint, 50000000);
 
             // Event for layer view state changed
-            MyMapView.LayerViewStateChanged += OnLayerViewStateChanged;
+            _myMapView.LayerViewStateChanged += OnLayerViewStateChanged;
 
             // Provide used Map to the MapView
-            MyMapView.Map = myMap;
+            _myMapView.Map = myMap;
         }
 
         private void OnLayerViewStateChanged(object sender, LayerViewStateChangedEventArgs e)
@@ -88,21 +101,41 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayLayerViewState
             string lName = e.Layer.Name;
             string lViewStatus = e.LayerViewState.Status.ToString();
 
-            // Display the layer name and view status in the appropriate Label control
+            // Display the layer name and view status in the appropriate TextView control
             switch (lName)
             {
                 case "Tiled Layer":
-                    StatusLabel_TiledLayer.Text = lName + " - " + lViewStatus;
+                    _TextViewTiledLayer.Text = lName + " - " + lViewStatus;
                     break;
                 case "Image Layer":
-                    StatusLabel_ImageLayer.Text = lName + " - " + lViewStatus;
+                    _TextViewImageLayer.Text = lName + " - " + lViewStatus;
                     break;
                 case "Feature Layer":
-                    StatusLabel_FeatureLayer.Text = lName + " - " + lViewStatus;
+                    _TextViewFeatureLayer.Text = lName + " - " + lViewStatus;
                     break;
                 default:
                     break;
             }
+        }
+
+        private void CreateLayout()
+        {
+            // Create a new vertical layout for the app
+            var layout = new LinearLayout(this) { Orientation = Orientation.Vertical };
+
+            // Create the controls to show the various layers' loading status
+            _TextViewTiledLayer = new TextView(this);
+            layout.AddView(_TextViewTiledLayer);
+            _TextViewImageLayer = new TextView(this);
+            layout.AddView(_TextViewImageLayer);
+            _TextViewFeatureLayer = new TextView(this);
+            layout.AddView(_TextViewFeatureLayer);
+
+            // Add the map view to the layout
+            layout.AddView(_myMapView);
+
+            // Show the layout in the app
+            SetContentView(layout);
         }
     }
 }

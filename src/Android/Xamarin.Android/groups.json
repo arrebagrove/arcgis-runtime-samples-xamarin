@@ -18,6 +18,10 @@
               "Path": "Samples/MapView/DisplayDrawingStatus"
             },
             {
+              "SampleName": "DisplayLayerViewState",
+              "Path": "Samples/MapView/DisplayLayerViewState"
+            },
+            {
               "SampleName":"MapRotation",
               "Path":"Samples/MapView/MapRotation"
             }
