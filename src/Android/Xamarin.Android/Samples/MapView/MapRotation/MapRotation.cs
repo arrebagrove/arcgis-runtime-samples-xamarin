@@ -44,12 +44,12 @@ namespace ArcGISRuntimeXamarin.Samples.MapRotation
             angleSlider.Progress = 0;
 
             // When the slider value (Progress) changes, rotate the map   
-            angleSlider.ProgressChanged += (object s, SeekBar.ProgressChangedEventArgs e) => 
+            angleSlider.ProgressChanged += async (object s, SeekBar.ProgressChangedEventArgs e) => 
             {
                 if (e.FromUser)
                 {
-                    // Set rotation asynchronously (no need to await the result)
-                    _myMapView.SetViewpointRotationAsync(e.Progress);
+                    // Set rotation asynchronously
+                    await _myMapView.SetViewpointRotationAsync(e.Progress);
 
                     // Display the MapView's rotation.
                     _loadStatusTextView.Text = string.Format("{0:0}°", _myMapView.MapRotation);
