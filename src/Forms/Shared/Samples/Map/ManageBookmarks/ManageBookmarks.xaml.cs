@@ -29,10 +29,10 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
         private void Initialize()
         {
 
-            // Create new map with a basemap.
+            // Create new map with a base map
             Map myMap = new Map(Basemap.CreateImageryWithLabels());
 
-            // Set the mapview, map property to the basemap.
+            // Set the map view, map property to the base map
             MyMapView.Map = myMap;
 
             // Create a set of predefined bookmarks; each one follows the pattern of:
@@ -41,7 +41,7 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
             // ~ Give the bookmark a name
             // ~ Assign the viewpoint
             // ~ Add the bookmark to bookmark collection of the map
-            // ~ Add the bookmark name to the UI combobox for the user to choose from 
+            // ~ Add the bookmark name to the UI combo box for the user to choose from 
 
             // Bookmark-1
             Viewpoint myViewpoint1 = new Viewpoint(27.3805833, 33.6321389, 6000);
@@ -75,29 +75,29 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
             MyMapView.Map.Bookmarks.Add(myBookmark4);
             bookmarkPicker.Items.Add(myBookmark4.Name);
 
-            // Set the initial combobox selection to the lat bookmark added.
+            // Set the initial combo box selection to the last bookmark added
             bookmarkPicker.SelectedIndex = 3;
 
-            // Zoom to the last bookmark.
+            // Zoom to the last bookmark
             myMap.InitialViewpoint = myMap.Bookmarks.Last().Viewpoint;
         }
 
         private void BookmarkPicker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Get the selected bookmarks name.
+            // Get the selected bookmarks name
             var selectedBookmarkName = bookmarkPicker.Items[bookmarkPicker.SelectedIndex];
 
-            // Get the collection of bookmarks in the map.
+            // Get the collection of bookmarks in the map
             BookmarkCollection myBookmarkCollection = MyMapView.Map.Bookmarks;
 
-            // Loop through each bookmark. 
+            // Loop through each bookmark
             foreach (var myBookmark in myBookmarkCollection)
             {
-                // Get the bookmarks name.
+                // Get the bookmarks name
                 var theBookmarkName = myBookmark.Name;
 
                 // If the selected bookmarks name matches one in the bookmark collection
-                // set that to be the maps viewpoint.
+                // set that to be the maps viewpoint
                 if (theBookmarkName == selectedBookmarkName.ToString())
                 {
                     MyMapView.SetViewpoint(myBookmark.Viewpoint);
@@ -106,7 +106,7 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
         }
 
         // Member (aka. global) variables for the dynamically created page allowing 
-        // the user to add additional bookmarks.
+        // the user to add additional bookmarks
         public Entry myEntryBookmarkName;
         public ContentPage bookmarkAddPage;
 
@@ -115,16 +115,16 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
             // Create root layout
             var layout = new StackLayout();
 
-            // Label for the UI to let the user know to add a bookmark.
+            // Label for the UI to let the user know to add a bookmark
             var myLabel = new Label();
             myLabel.Text = "Bookmark Name:";
             layout.Children.Add(myLabel);
 
-            // Entry location for the user to enter the bookmark name.
+            // Entry location for the user to enter the bookmark name
             myEntryBookmarkName = new Entry();
             layout.Children.Add(myEntryBookmarkName);
 
-            // Button to accept the users bookmark name.
+            // Button to accept the users bookmark name
             var okButton = new Button();
             okButton.Text = "OK";
             okButton.Clicked += OkButton_Clicked;
@@ -137,38 +137,38 @@ namespace ArcGISRuntimeXamarin.Samples.ManageBookmarks
                 Title = "Add Bookmark"
             };
 
-            // Navigate to the dynamically created user interaction page.
+            // Navigate to the dynamically created user interaction page
             await Navigation.PushAsync(bookmarkAddPage);
         }
 
         private void OkButton_Clicked(object sender, EventArgs e)
         {
-            // Get the name from the text field.
+            // Get the name from the text field
             var name = myEntryBookmarkName.Text;
 
-            // Exit if the name is empty.
+            // Exit if the name is empty
             if (string.IsNullOrEmpty(name))
                 return;
 
-            // Check to see if there is a bookmark with same name.
+            // Check to see if there is a bookmark with same name
             bool doesNameExist = MyMapView.Map.Bookmarks.Any(b => b.Name == name);
             if (doesNameExist)
                 return;
 
-            // Create a new bookmark.
+            // Create a new bookmark
             Bookmark myBookmark = new Bookmark();
             myBookmark.Name = name;
 
-            // Get the current viewpoint from map and assign it to bookmark. 
+            // Get the current viewpoint from map and assign it to bookmark 
             myBookmark.Viewpoint = MyMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
 
-            // Add the bookmark to bookmark collection of the map.
+            // Add the bookmark to bookmark collection of the map
             MyMapView.Map.Bookmarks.Add(myBookmark);
 
-            // Add the bookmark name to the list of choices in the picker.
+            // Add the bookmark name to the list of choices in the picker
             bookmarkPicker.Items.Add(name);
 
-            // Close the user interaction page to add a bookmark. 
+            // Close the user interaction page to add a bookmark 
             Navigation.RemovePage(bookmarkAddPage);
             bookmarkAddPage = null;
         }
