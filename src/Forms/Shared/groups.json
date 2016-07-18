@@ -64,9 +64,13 @@
               "SampleName": "SetMapSpatialReference",
               "Path": "Samples/Map/SetMapSpatialReference"
             },
-              {
+            {
               "SampleName":"ChangeBasemap",
               "Path":"Samples/Map/ChangeBasemap"
+            },
+            {
+              "SampleName":"ManageBookmarks",
+              "Path":"Samples/Map/ManageBookmarks"
             }
           ]
         }
