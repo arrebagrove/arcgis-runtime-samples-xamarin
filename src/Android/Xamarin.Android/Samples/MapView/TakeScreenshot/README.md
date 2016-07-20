@@ -1,8 +1,8 @@
-#Change sublayer visibility
+#Take Screenshot
 
-This sample demonstrates how to show or hide sublayers of a map image layer.
+This sample demonstrates how you can take screenshot of a map. Pan or zoom to a specific location and tap the button to see a preview of the image produced. 
 
-<img src="ChangeSublayerVisibility.jpg" width="350"/>
+<img src="TakeScreenshot.jpg" width="350"/>
 
 ### Instructions
 
