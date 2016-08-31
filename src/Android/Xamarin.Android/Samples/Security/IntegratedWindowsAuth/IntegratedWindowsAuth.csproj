@@ -9,8 +9,8 @@
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IntegratedWindowsAuthentication</RootNamespace>
-    <AssemblyName>IntegratedWindowsAuthentication</AssemblyName>
+    <RootNamespace>IntegratedWindowsAuth</RootNamespace>
+    <AssemblyName>IntegratedWindowsAuth</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>true</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Esri.ArcGISRuntime, Version=100.0.0.0, Culture=neutral, PublicKeyToken=29c6dd6e8553d944, processorArchitecture=MSIL">
-      <HintPath>packages\Esri.ArcGISRuntime.Xamarin.Android.100.0.0.1342-beta\lib\MonoAndroid10\Esri.ArcGISRuntime.dll</HintPath>
+      <HintPath>packages\Esri.ArcGISRuntime.Xamarin.Android.100.0.0.1369-beta\lib\MonoAndroid10\Esri.ArcGISRuntime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />
@@ -58,7 +58,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />

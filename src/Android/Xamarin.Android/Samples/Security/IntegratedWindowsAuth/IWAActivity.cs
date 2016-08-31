@@ -18,9 +18,9 @@ using Esri.ArcGISRuntime.UI;
 using System;
 using System.Threading.Tasks;
 
-namespace IntegratedWindowsAuthentication
+namespace IntegratedWindowsAuth
 {
-    [Activity(Label = "IntegratedWindowsAuthentication", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "IntegratedWindowsAuth", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
         //TODO - Add the URL for your IWA-secured portal
