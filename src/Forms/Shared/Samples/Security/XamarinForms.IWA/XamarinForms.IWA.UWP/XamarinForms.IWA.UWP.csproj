@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A006AEAB-4926-4FDA-B8E4-213ED37799A9}</ProjectGuid>
+    <ProjectGuid>{71BE4A79-E27C-4453-B29F-13A8C5414FEC}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XamarinForms.IWA.UWP</RootNamespace>
