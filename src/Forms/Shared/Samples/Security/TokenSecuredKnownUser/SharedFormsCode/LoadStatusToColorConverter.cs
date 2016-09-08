@@ -2,14 +2,12 @@
 using System.Globalization;
 using Xamarin.Forms;
 
-namespace TokenSecuredChallenge
+namespace SharedFormsCode
 {
     // Value converter class to return a color for the current load status
-    // Note: to make this class accessible as a static resource in the shared form (TokenChallengePage.xaml)
-    //       the assembly name for each platform had to be changed to the same value ("TokenChallengeForms")
-    //       in order to provide a consistent XML namespace value. Another option would be to place such code in
-    //       a PCL project rather than a shared project (the shared project would still be needed for the ArcGIS 
-    //       Runtime code).
+    // Note: to make this class accessible as a static resource in the shared form (TokenKnownUserPage.xaml)
+    //       this class was added to a PCL project rather than the shared project (the shared project is still 
+    //       needed for the shared ArcGIS Runtime code).
     public class LoadStatusToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -23,16 +21,16 @@ namespace TokenSecuredChallenge
                 // Green for loaded
                 // Red for not loaded or failure to load
                 // Gray if still loading
-                case (int)Esri.ArcGISRuntime.LoadStatus.Loaded:
+                case 0: // == Esri.ArcGISRuntime.LoadStatus.Loaded
                     statusColor = Color.Green;
                     break;
-                case (int)Esri.ArcGISRuntime.LoadStatus.Loading:
+                case 1: // == Esri.ArcGISRuntime.LoadStatus.Loading
                     statusColor = Color.Gray;
                     break;
-                case (int)Esri.ArcGISRuntime.LoadStatus.FailedToLoad:
+                case 2: // == Esri.ArcGISRuntime.LoadStatus.FailedToLoad
                     statusColor = Color.Red;
                     break;
-                case (int)Esri.ArcGISRuntime.LoadStatus.NotLoaded:
+                case 3: // == Esri.ArcGISRuntime.LoadStatus.NotLoaded
                     statusColor = Color.Red;
                     break;
             }

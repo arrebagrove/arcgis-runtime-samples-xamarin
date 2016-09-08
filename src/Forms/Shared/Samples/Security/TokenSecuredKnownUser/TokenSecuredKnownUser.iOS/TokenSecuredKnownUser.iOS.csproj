@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BE66B22B-5B66-432A-ACB1-6DC2E61FB3CC}</ProjectGuid>
+    <ProjectGuid>{80A44703-EDB6-4897-A795-3E906D7578D2}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TokenSecuredChallenge.Forms</RootNamespace>
+    <RootNamespace>TokenSecuredKnownUser.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>TokenSecuredChallengeForms</AssemblyName>
+    <AssemblyName>TokenSecuredKnownUseriOS</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -146,7 +146,13 @@
     </Reference>
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <Import Project="..\TokenSecuredChallenge\TokenSecuredChallenge.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\SharedFormsCode\SharedFormsCode.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>SharedFormsCode</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\TokenSecuredKnownUser\TokenSecuredKnownUser.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\..\packages\Esri.ArcGISRuntime.Xamarin.iOS.100.0.0.1369-beta\build\Xamarin.iOS10\Esri.ArcGISRuntime.Xamarin.iOS.targets" Condition="Exists('..\..\packages\Esri.ArcGISRuntime.Xamarin.iOS.100.0.0.1369-beta\build\Xamarin.iOS10\Esri.ArcGISRuntime.Xamarin.iOS.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

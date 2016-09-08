@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{A874C943-8A4C-4CAA-BC72-E23DF6E5D87C}</ProjectGuid>
+    <ProjectGuid>{E750C228-9511-4897-9A00-BA517E68D9A2}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TokenSecuredChallenge.Forms</RootNamespace>
-    <AssemblyName>TokenSecuredChallengeForms</AssemblyName>
+    <RootNamespace>TokenSecuredKnownUser.UWP</RootNamespace>
+    <AssemblyName>TokenSecuredKnownUser.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
@@ -127,10 +127,17 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedFormsCode\SharedFormsCode.csproj">
+      <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
+      <Name>SharedFormsCode</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
-  <Import Project="..\TokenSecuredChallenge\TokenSecuredChallenge.projitems" Label="Shared" />
+  <Import Project="..\TokenSecuredKnownUser\TokenSecuredKnownUser.projitems" Label="Shared" Condition="Exists('..\TokenSecuredKnownUser\TokenSecuredKnownUser.projitems')" />
+  <Import Project="..\TokenSecuredKnownUser\TokenSecuredKnownUser.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
