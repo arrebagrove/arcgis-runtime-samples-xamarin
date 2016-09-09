@@ -24,13 +24,16 @@ using Xamarin.Auth;
 namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 {
     [Activity]
-    public class AuthorMap : Activity
+    public class AuthorMap : Activity, IOAuthAuthorizeHandler
     {
         // Create and hold reference to the used MapView
         private MapView _myMapView = new MapView();
-        
-        // TaskCompletionSource for asynchronously authenticating the user
-        private TaskCompletionSource<Credential> _tcs;
+
+        // Progress bar to show when the app is working
+        ProgressBar _progressBar;
+
+        // Use a TaskCompletionSource to track the completion of the authorization
+        private TaskCompletionSource<IDictionary<string, string>> _taskCompletionSource;
 
         // String array to store basemap constructor types
         private string[] _basemapTypes = new string[]
@@ -89,14 +92,19 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // Create a horizontal layout for the buttons at the top
             var buttonLayout = new LinearLayout(this) { Orientation = Orientation.Horizontal };
 
+            // Create a progress bar to show when the app is working
+            _progressBar = new ProgressBar(this);
+            _progressBar.Indeterminate = true;
+            _progressBar.Visibility = ViewStates.Invisible;
+            
             // Create button to show available basemap
             var basemapButton = new Button(this);
-            basemapButton.Text = "Choose Basemap";
+            basemapButton.Text = "Basemap";
             basemapButton.Click += OnBasemapsClicked;
 
             // Create a button to show operational layers
             var layersButton = new Button(this);
-            layersButton.Text = "Choose Layers";
+            layersButton.Text = "Layers";
             layersButton.Click += OnLayersClicked;
 
             // Create a button to save the map
@@ -104,9 +112,10 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             saveMapButton.Text = "Save ...";
             saveMapButton.Click += OnSaveMapClicked;
 
-            // Add basemap, layers, and save buttons to the layout
+            // Add basemap, layers, progress bar, and save buttons to the layout
             buttonLayout.AddView(basemapButton);
             buttonLayout.AddView(layersButton);
+            buttonLayout.AddView(_progressBar);
             buttonLayout.AddView(saveMapButton);
 
             // Create a new vertical layout for the app (buttons followed by map view)
@@ -125,30 +134,30 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
         private void OnSaveMapClicked(object sender, EventArgs e)
         {
             // Create a dialog to show save options (title, description, and tags)
-            SaveDialogFragment saveMapDialog = new SaveDialogFragment();
+            SaveDialogFragment saveMapDialog = new SaveDialogFragment(_myMapView.Map.PortalItem);
             saveMapDialog.OnSaveClicked += SaveMapAsync;
+
             // Begin a transaction to show a UI fragment (the save dialog)
             FragmentTransaction trans = FragmentManager.BeginTransaction();
             saveMapDialog.Show(trans, "save map");
-
         }
 
         private async void SaveMapAsync(object sender, OnSaveMapEventArgs e)
         {
-            var alertBuilder = new AlertDialog.Builder(_myMapView.Context);
+            var alertBuilder = new AlertDialog.Builder(this);
+
+            // Get the current map
+            var myMap = _myMapView.Map;
 
             try
             {
                 // Show the progress bar so the user knows work is happening
-                //SaveProgressBar.Visibility = Visibility.Visible;
+                _progressBar.Visibility = ViewStates.Visible;
 
                 // Get information entered by the user for the new portal item properties
                 var title = e.MapTitle;
                 var description = e.MapDescription;
                 var tags = e.Tags;
-
-                // Get the current map
-                var myMap = _myMapView.Map;
 
                 // Apply the current extent as the map's initial extent
                 myMap.InitialViewpoint = _myMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
@@ -185,7 +194,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             finally
             {
                 // Hide the progress bar
-                //SaveProgressBar.Visibility = Visibility.Hidden;
+                _progressBar.Visibility = ViewStates.Invisible;                
             }
         }
 
@@ -224,7 +233,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             await myMap.SaveAsAsync(agsOnline, null, title, description, tags, null);
         }
 
-        #region Basemaps Button
+        #region Basemap Button
         private void OnBasemapsClicked(object sender, EventArgs e)
         {
             var mapsButton = sender as Button;
@@ -346,73 +355,82 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             
             // Assign the method that AuthenticationManager will call to challenge for secured resources
             thisAuthenticationManager.ChallengeHandler = new ChallengeHandler(CreateCredentialAsync);
+
+            // Set the OAuth authorization handler to this class (Implements IOAuthAuthorize interface)
+            thisAuthenticationManager.OAuthAuthorizeHandler = this;
         }
 
-        // ChallengeHandler function for AuthenticationManager that will be called whenever access to a secured
-        // resource is attempted
+        // ChallengeHandler function for AuthenticationManager, called whenever access to a secured resource is attempted
         private async Task<Credential> CreateCredentialAsync(CredentialRequestInfo info)
         {
-            // Create a TaskCompletionSource to contain the result of authorization
-            _tcs = new TaskCompletionSource<Credential>();
+            OAuthTokenCredential credential = null;
 
-            // Call a function to authorize with OAuth
-            TryAuthenticateOAuth(info.ServiceUri, AppClientId, AuthorizeUrl, OAuthRedirectUrl);
+            try
+            {
+                // Create generate token options if necessary
+                if (info.GenerateTokenOptions == null)
+                {
+                    info.GenerateTokenOptions = new GenerateTokenOptions();
+                }
 
-            // Return the asynchronous result of the task when complete
-            return await _tcs.Task;
+                // AuthenticationManager will handle challenging the user for credentials
+                credential = await AuthenticationManager.Current.GenerateCredentialAsync
+                    (
+                            info.ServiceUri,
+                            info.GenerateTokenOptions
+                    ) as OAuthTokenCredential;
+            }
+            catch (Exception ex)
+            {
+                // Exception will be reported in calling function
+                throw (ex);
+            }
+
+            return credential;
         }
 
-        /// Show a UI for authenticating with OAuth and handle the result (successful authentication or error/failure)
-        /// </summary>
-        /// <param name="secureUri">The System.Uri of the secured resource</param>
-        /// <param name="clientID">Client ID for an app registered with the server hosting the secure resource</param>
-        /// <param name="authorizeUrl">URL string of the OAuth authorization end point for the server</param>
-        /// <param name="redirectUrl">URL string for the server to direct the response when authentication is complete</param>
-        private void TryAuthenticateOAuth(Uri secureUri, string clientID, string authorizeUrl, string redirectUrl)
+        // IOAuthAuthorizeHandler.AuthorizeAsync implementation
+        public Task<IDictionary<string, string>> AuthorizeAsync(Uri serviceUri, Uri authorizeUri, Uri callbackUri)
         {
+            // If the TaskCompletionSource is not null, authorization is in progress
+            if (_taskCompletionSource != null)
+            {
+                // Allow only one authorization process at a time
+                throw new Exception();
+            }
+
+            // Create a task completion source
+            _taskCompletionSource = new TaskCompletionSource<IDictionary<string, string>>();
+
             // Create a new Xamarin.Auth.OAuth2Authenticator using the information passed in
-            Xamarin.Auth.OAuth2Authenticator auth = new OAuth2Authenticator(
-                clientId: clientID,
+            Xamarin.Auth.OAuth2Authenticator authenticator = new OAuth2Authenticator(
+                clientId:  AppClientId,
                 scope: "",
-                authorizeUrl: new Uri(authorizeUrl),
-                redirectUrl: new Uri(redirectUrl));
+                authorizeUrl: authorizeUri,
+                redirectUrl: callbackUri);
 
             // Allow the user to cancel the OAuth attempt
-            auth.AllowCancel = true;
+            authenticator.AllowCancel = true;
 
             // Define a handler for the OAuth2Authenticator.Completed event
-            auth.Completed += (sender, authArgs) =>
+            authenticator.Completed += (sender, authArgs) =>
             {
                 try
                 {
-                    // Throw an exception if the user could not be authenticated
-                    if (!authArgs.IsAuthenticated)
+                    // Check if the user is authenticated
+                    if (authArgs.IsAuthenticated)
                     {
-                        throw new Exception("Unable to authenticate user.");
+                        // If authorization was successful, get the user's account
+                        Xamarin.Auth.Account authenticatedAccount = authArgs.Account;
+
+                        // Set the result (Credential) for the TaskCompletionSource
+                        _taskCompletionSource.SetResult(authenticatedAccount.Properties);
                     }
-
-                    // If authorization was successful, get the user's account
-                    Xamarin.Auth.Account authenticatedAccount = authArgs.Account;
-
-                    // Create a Esri.ArcGISRuntime.Security.OAuthTokenCredential for use with the AuthenticationManager
-                    // Set properties of the credential using information from the authenticated account
-                    Esri.ArcGISRuntime.Security.OAuthTokenCredential cred = new OAuthTokenCredential
-                    {
-                        Token = authenticatedAccount.Properties["access_token"],
-                        UserName = authenticatedAccount.Properties["username"],
-                        ServiceUri = secureUri
-                    };
-
-                    // Add the OAuthTokenCredential to the AuthenticationManager
-                    AuthenticationManager.Current.AddCredential(cred);
-
-                    // Set the result (Credential) for the TaskCompletionSource
-                    _tcs.SetResult(cred);
                 }
                 catch (Exception ex)
                 {
                     // If authentication failed, set the exception on the TaskCompletionSource
-                    _tcs.SetException(ex);
+                    _taskCompletionSource.SetException(ex);
                 }
                 finally
                 {
@@ -422,14 +440,68 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             };
 
             // If an error was encountered when authenticating, set the exception on the TaskCompletionSource
-            auth.Error += (sndr, errArgs) =>
+            authenticator.Error += (sndr, errArgs) =>
             {
-                _tcs.SetException(errArgs.Exception);
+                // If the user cancels, the Error event is raised but there is no exception ... best to check first
+                if (errArgs.Exception != null)
+                {
+                    _taskCompletionSource.SetException(errArgs.Exception);
+                }
+                else
+                {
+                    // Login canceled: end the OAuth login activity
+                    if(_taskCompletionSource != null)
+                    {
+                        _taskCompletionSource.TrySetCanceled();
+                        this.FinishActivity(99);
+                    }
+                }
             };
 
             // Present the OAuth UI (Activity) so the user can enter user name and password
-            var intent = auth.GetUI(this);
+            var intent = authenticator.GetUI(this);
             this.StartActivityForResult(intent, 99);
+
+            // Return completion source task so the caller can await completion
+            return _taskCompletionSource.Task;
+        }
+
+        private static IDictionary<string, string> DecodeParameters(Uri uri)
+        {
+            // Create a dictionary of key value pairs returned in an OAuth authorization response URI query string
+            var answer = string.Empty;
+
+            // Get the values from the URI fragment or query string
+            if (!string.IsNullOrEmpty(uri.Fragment))
+            {
+                answer = uri.Fragment.Substring(1);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(uri.Query))
+                {
+                    answer = uri.Query.Substring(1);
+                }
+            }
+
+            // Parse parameters into key / value pairs
+            var keyValueDictionary = new Dictionary<string, string>();
+            var keysAndValues = answer.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var kvString in keysAndValues)
+            {
+                var pair = kvString.Split('=');
+                string key = pair[0];
+                string value = string.Empty;
+                if (key.Length > 1)
+                {
+                    value = Uri.UnescapeDataString(pair[1]);
+                }
+
+                keyValueDictionary.Add(key, value);
+            }
+
+            // Return the dictionary of string keys/values
+            return keyValueDictionary;
         }
         #endregion
     }
@@ -437,40 +509,87 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
     // A custom DialogFragment class to show input controls for saving a web map
     public class SaveDialogFragment : DialogFragment
     {
+        // Inputs for portal item title, description, and tags
         private EditText _mapTitleTextbox;
         private EditText _mapDescriptionTextbox;
         private EditText _tagsTextbox;
 
+        // Store any existing portal item (for "update" versus "save", e.g.)
+        private ArcGISPortalItem _portalItem = null;
+
+        // Raise an event so the listener can access input values when the form has been completed
         public event EventHandler<OnSaveMapEventArgs> OnSaveClicked;
+
+        public SaveDialogFragment(ArcGISPortalItem mapItem)
+        {
+            this._portalItem = mapItem;
+        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            base.OnCreateView(inflater, container, savedInstanceState);
+            // Dialog to display
+            LinearLayout dialogView = null;
 
-            // The container for the dialog is a vertical linear layout
-            LinearLayout dialogView = new LinearLayout(this.Context);
-            dialogView.Orientation = Orientation.Vertical;
+            // Get the context for creating the dialog controls
+            Android.Content.Context ctx = this.Activity.ApplicationContext;
 
-            // Add a text box for entering a title for the new web map
-            _mapTitleTextbox = new EditText(this.Context);
-            _mapTitleTextbox.Hint = "Title";
-            dialogView.AddView(_mapTitleTextbox);
+            // Set a dialog title
+            this.Dialog.SetTitle("Save Map to Portal");
 
-            // Add a text box for entering a description
-            _mapDescriptionTextbox = new EditText(this.Context);
-            _mapDescriptionTextbox.Hint = "Description";
-            dialogView.AddView(_mapDescriptionTextbox);
+            try
+            {
+                base.OnCreateView(inflater, container, savedInstanceState);
 
-            // Add a text box for entering tags (populate with some values so the user doesn't have to fill this in)
-            _tagsTextbox = new EditText(this.Context);
-            _tagsTextbox.Text = "ArcGIS Runtime, Web Map";
-            dialogView.AddView(_tagsTextbox);
+                // The container for the dialog is a vertical linear layout
+                dialogView = new LinearLayout(ctx);
+                dialogView.Orientation = Orientation.Vertical;
 
-            // Add a button to save the map
-            Button saveMapButton = new Button(this.Context);
-            saveMapButton.Text = "Save";
-            saveMapButton.Click += SaveMapButtonClick;
-            dialogView.AddView(saveMapButton);
+                // Add a text box for entering a title for the new web map
+                _mapTitleTextbox = new EditText(ctx);
+                _mapTitleTextbox.Hint = "Title";                
+                dialogView.AddView(_mapTitleTextbox);
+
+                // Add a text box for entering a description
+                _mapDescriptionTextbox = new EditText(ctx);
+                _mapDescriptionTextbox.Hint = "Description";
+                dialogView.AddView(_mapDescriptionTextbox);
+
+                // Add a text box for entering tags (populate with some values so the user doesn't have to fill this in)
+                _tagsTextbox = new EditText(ctx);
+                _tagsTextbox.Text = "ArcGIS Runtime, Web Map";
+                dialogView.AddView(_tagsTextbox);
+
+                // Add a button to save the map
+                Button saveMapButton = new Button(ctx);
+                saveMapButton.Text = "Save";
+                saveMapButton.Click += SaveMapButtonClick;
+                dialogView.AddView(saveMapButton);
+
+                // If there's an existing portal item, configure the dialog for "update" (read-only entries)
+                if (this._portalItem != null)
+                {
+                    _mapTitleTextbox.Text = this._portalItem.Title;
+                    _mapTitleTextbox.Enabled = false;
+
+                    _mapDescriptionTextbox.Text = this._portalItem.Description;
+                    _mapDescriptionTextbox.Enabled = false;
+
+                    _tagsTextbox.Text = string.Join(",", this._portalItem.Tags);
+                    _tagsTextbox.Enabled = false;
+
+                    // Change some of the control text
+                    this.Dialog.SetTitle("Save Changes to Map");
+                    saveMapButton.Text = "Update";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Show the exception message 
+                var alertBuilder = new AlertDialog.Builder(this.Activity);
+                alertBuilder.SetTitle("Error");
+                alertBuilder.SetMessage(ex.Message);
+                alertBuilder.Show();
+            }
 
             // Return the new view for display
             return dialogView;
@@ -504,7 +623,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             catch(Exception ex)
             {
                 // Show the exception message (dialog will stay open so user can try again)
-                var alertBuilder = new AlertDialog.Builder(this.Context);
+                var alertBuilder = new AlertDialog.Builder(this.Activity);
                 alertBuilder.SetTitle("Error");
                 alertBuilder.SetMessage(ex.Message);
                 alertBuilder.Show();
@@ -515,8 +634,13 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
     // Custom EventArgs class for containing portal item properties when saving a map
     public class OnSaveMapEventArgs : EventArgs
     {
+        // Portal item title
         public string MapTitle { get; set; }
+
+        // Portal item description
         public string MapDescription { get; set; }
+
+        // Portal item tags
         public string[] Tags { get; set; }
 
         public OnSaveMapEventArgs(string title, string description, string[] tags) : base()
