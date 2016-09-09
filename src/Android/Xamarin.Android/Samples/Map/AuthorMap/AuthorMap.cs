@@ -81,7 +81,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
         private void Initialize()
         {
             // Create new Map with basemap
-            Map myMap = new Map(Basemap.CreateTopographic());
+            Map myMap = new Map(Basemap.CreateLightGrayCanvas());
 
             // Provide used Map to the MapView
             _myMapView.Map = myMap;
@@ -92,11 +92,16 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // Create a horizontal layout for the buttons at the top
             var buttonLayout = new LinearLayout(this) { Orientation = Orientation.Horizontal };
 
-            // Create a progress bar to show when the app is working
+            // Create a progress bar (circle) to show when the app is working
             _progressBar = new ProgressBar(this);
             _progressBar.Indeterminate = true;
             _progressBar.Visibility = ViewStates.Invisible;
-            
+
+            // Create button to clear the map from the map view (start over)
+            var newMapButton = new Button(this);
+            newMapButton.Text = "New";
+            newMapButton.Click += OnNewMapClicked;
+
             // Create button to show available basemap
             var basemapButton = new Button(this);
             basemapButton.Text = "Basemap";
@@ -112,11 +117,12 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             saveMapButton.Text = "Save ...";
             saveMapButton.Click += OnSaveMapClicked;
 
-            // Add basemap, layers, progress bar, and save buttons to the layout
+            // Add progress bar, new map, basemap, layers, and save buttons to the layout
+            buttonLayout.AddView(newMapButton);
             buttonLayout.AddView(basemapButton);
             buttonLayout.AddView(layersButton);
-            buttonLayout.AddView(_progressBar);
             buttonLayout.AddView(saveMapButton);
+            buttonLayout.AddView(_progressBar);
 
             // Create a new vertical layout for the app (buttons followed by map view)
             var mainLayout = new LinearLayout(this) { Orientation = Orientation.Vertical };
@@ -129,6 +135,12 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
             // Show the layout in the app
             SetContentView(mainLayout);
+        }
+
+        private void OnNewMapClicked(object sender, EventArgs e)
+        {
+            // Create a new map for the map view (can make changes and save as a new portal item)
+            _myMapView.Map = new Map(Basemap.CreateLightGrayCanvas());
         }
 
         private void OnSaveMapClicked(object sender, EventArgs e)
