@@ -7,15 +7,13 @@
 // "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific 
 // language governing permissions and limitations under the License.
 
-using CoreFoundation;
-using Esri.ArcGISRuntime;
 using Esri.ArcGISRuntime.Mapping;
+using Esri.ArcGISRuntime.Portal;
 using Esri.ArcGISRuntime.Security;
 using Esri.ArcGISRuntime.UI;
 using Foundation;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
@@ -41,7 +39,10 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
         private TaskCompletionSource<IDictionary<string, string>> _taskCompletionSource;
 
         // Overlay with entry controls for map item details (title, description, and tags)
-        SaveMapDialogOverlay _mapInfoUI;
+        private SaveMapDialogOverlay _mapInfoUI;
+
+        // Progress bar to show that the app is working
+        private UIActivityIndicatorView _activityIndicator;
 
         // Constants for OAuth-related values ...
         // URL of the server to authenticate with
@@ -52,7 +53,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
         // TODO: Add URL for redirecting after a successful authorization
         //       Note - this must be a URL configured as a valid Redirect URI with your app
-        private const string OAuthRedirectUrl = "http://myapps.portalmapapp";
+        private const string OAuthRedirectUrl = "https://developers.arcgis.com";
 
         // URL used by the server for authorization
         private const string AuthorizeUrl = "https://www.arcgis.com/sharing/oauth2/authorize";
@@ -80,6 +81,9 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
             // Add the Map to the MapView
             _myMapView.Map = myMap;
+
+            // Set up the challenge handler and OAuth authorization 
+            UpdateAuthenticationManager();
         }
 
         private void CreateLayout()
@@ -90,6 +94,11 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // Create a new MapView control
             _myMapView = new MapView();
 
+            // Create an activity indicator
+            var centerRect = new CoreGraphics.CGRect(View.Bounds.Width / 2, View.Bounds.Height / 2, 40, 40);
+            _activityIndicator = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge);
+            _activityIndicator.Frame = centerRect;
+            
             // Define the visual frame for the MapView
             _myMapView.Frame = new CoreGraphics.CGRect(0, yPageOffset, View.Bounds.Width, View.Bounds.Height - yPageOffset);
 
@@ -105,8 +114,8 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // Handle the "click" for each segment (new segment is selected)
             segmentButton.ValueChanged += SegmentButtonClicked;           
 
-            // Add the MapView and UIButton to the page
-            View.AddSubviews(_myMapView, segmentButton);
+            // Add the MapView, progress bar, and UIButton to the page
+            View.AddSubviews(_myMapView, _activityIndicator, segmentButton);
         }
 
         private void SegmentButtonClicked(object sender, EventArgs e)
@@ -225,7 +234,7 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
             // Create a view to show map item info entry controls over the map view
             var ovBounds = _myMapView.Bounds;
-            _mapInfoUI = new SaveMapDialogOverlay(ovBounds, 0.75f, UIColor.White);
+            _mapInfoUI = new SaveMapDialogOverlay(ovBounds, 0.75f, UIColor.White, _myMapView.Map.PortalItem);
 
             // Handle the OnMapInfoEntered event to get the info entered by the user
             _mapInfoUI.OnMapInfoEntered += MapItemInfoEntered;
@@ -239,21 +248,61 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
         // Handle the OnMapInfoEntered event from the item input UI
         // MapSavedEventArgs contains the title, description, and tags that were entered
-        private void MapItemInfoEntered(object sender, MapSavedEventArgs e)
+        private async void MapItemInfoEntered(object sender, MapSavedEventArgs e)
         {
+            // Get the current map
+            var myMap = _myMapView.Map;
+
             try
             {
+                // Show the activity indicator so the user knows work is happening
+                _activityIndicator.StartAnimating();
                 
+                // Get information entered by the user for the new portal item properties
+                var title = e.Title;
+                var description = e.Description;
+                var tags = e.Tags;
+
+                // Apply the current extent as the map's initial extent
+                myMap.InitialViewpoint = _myMapView.GetCurrentViewpoint(ViewpointType.BoundingGeometry);
+
+                // See if the map has already been saved (has an associated portal item)
+                if (myMap.PortalItem == null)
+                {
+                    // Call a function to save the map as a new portal item
+                    await SaveNewMapAsync(myMap, title, description, tags);
+
+                    // Report a successful save
+                    UIAlertController alert = UIAlertController.Create("Saved map", "Saved " + title + " to ArcGIS Online", UIAlertControllerStyle.Alert);
+                    alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                    PresentViewController(alert, true, null);
+                }
+                else
+                {
+                    // This is not the initial save, call SaveAsync to save changes to the existing portal item
+                    await myMap.SaveAsync();
+
+                    // Report update was successful
+                    UIAlertController alert = UIAlertController.Create("Updated map", "Saved changes to " + title, UIAlertControllerStyle.Alert);
+                    alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                    PresentViewController(alert, true, null);
+                }
             }
             catch (Exception ex)
             {
-
+                // Report save error
+                UIAlertController alert = UIAlertController.Create("Error", "Unable to save " + e.Title, UIAlertControllerStyle.Alert);
+                alert.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+                PresentViewController(alert, true, null);
             }
             finally
             {
                 // Get rid of the item input controls
                 _mapInfoUI.Hide();
                 _mapInfoUI = null;
+
+                // Hide the progress bar
+                _activityIndicator.StopAnimating();
             }
         }
 
@@ -262,6 +311,41 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // Remove the item input UI
             _mapInfoUI.Hide();
             _mapInfoUI = null;
+        }
+
+        private async Task SaveNewMapAsync(Map myMap, string title, string description, string[] tags)
+        {
+            // Challenge the user for portal credentials (OAuth credential request for arcgis.com)
+            CredentialRequestInfo loginInfo = new CredentialRequestInfo();
+
+            // Use the OAuth implicit grant flow
+            loginInfo.GenerateTokenOptions = new GenerateTokenOptions
+            {
+                TokenAuthenticationType = TokenAuthenticationType.OAuthImplicit
+            };
+
+            // Indicate the url (portal) to authenticate with (ArcGIS Online)
+            loginInfo.ServiceUri = new Uri("http://www.arcgis.com/sharing/rest");
+
+            try
+            {
+                // Get a reference to the (singleton) AuthenticationManager for the app
+                AuthenticationManager thisAuthenticationManager = AuthenticationManager.Current;
+
+                // Call GetCredentialAsync on the AuthenticationManager to invoke the challenge handler
+                await thisAuthenticationManager.GetCredentialAsync(loginInfo, false);
+            }
+            catch (System.OperationCanceledException)
+            {
+                // user canceled the login
+                throw new Exception("Portal log in was canceled.");
+            }
+
+            // Get the ArcGIS Online portal (will use credential from login above)
+            ArcGISPortal agsOnline = await ArcGISPortal.CreateAsync();
+
+            // Save the current state of the map as a portal item in the user's default folder
+            await myMap.SaveAsAsync(agsOnline, null, title, description, tags, null);
         }
 
         #region OAuth helpers
@@ -376,7 +460,14 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
             // If an error was encountered when authenticating, set the exception on the TaskCompletionSource
             auth.Error += (sndr, errArgs) =>
             {
-                _taskCompletionSource.SetException(errArgs.Exception);
+                if (errArgs.Exception != null)
+                {
+                    _taskCompletionSource.TrySetException(errArgs.Exception);
+                }
+                else
+                {
+                    _taskCompletionSource.TrySetException(new Exception(errArgs.Message));
+                }
             };
 
             // Present the OAuth UI (on the app's UI thread) so the user can enter user name and password
@@ -443,8 +534,14 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
         private UITextField _descriptionTextField;
         private UITextField _tagsTextField;
 
-        public SaveMapDialogOverlay(CoreGraphics.CGRect frame, nfloat transparency, UIColor color) : base(frame)
+        // Store any existing portal item (for "update" versus "save", e.g.)
+        private ArcGISPortalItem _portalItem = null;
+
+        public SaveMapDialogOverlay(CoreGraphics.CGRect frame, nfloat transparency, UIColor color, ArcGISPortalItem mapItem) : base(frame)
         {
+            // Store the current portal item for the map (if any)
+            _portalItem = mapItem;
+
             // Create a semi-transparent overlay with the specified background color
             BackgroundColor = color;
             Alpha = transparency;
@@ -512,6 +609,22 @@ namespace ArcGISRuntimeXamarin.Samples.AuthorMap
 
             // Add the controls
             AddSubviews(_titleTextField, _descriptionTextField, _tagsTextField, saveButton, cancelButton);
+
+            // If there's an existing portal item, configure the dialog for "update" (read-only entries)
+            if (this._portalItem != null)
+            {
+                _titleTextField.Text = this._portalItem.Title;
+                _titleTextField.Enabled = false;
+
+                _descriptionTextField.Text = this._portalItem.Description;
+                _descriptionTextField.Enabled = false;
+
+                _tagsTextField.Text = string.Join(",", this._portalItem.Tags);
+                _tagsTextField.Enabled = false;
+
+                // Change the button text
+                saveButton.SetTitle("Update", UIControlState.Normal);
+            }
         }
 
         // Animate increasing transparency to completely hide the view, then remove it
