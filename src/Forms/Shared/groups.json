@@ -35,42 +35,46 @@
           "Name":"Map",
           "SubCategoryName":"Map",
           "ShowGroup":true,
-          "SampleInfos":[
+          "SampleInfos": [
+           {
+              "SampleName":"AuthorMap",
+              "Path":"Samples/Map/AuthorMap"
+            },
             {
-              "SampleName":"DisplayMap",
-              "Path":"Samples/Map/DisplayMap"
+              "SampleName": "DisplayMap",
+              "Path": "Samples/Map/DisplayMap"
             },
             {
               "SampleName": "OpenExistingMap",
               "Path": "Samples/Map/OpenExistingMap"
             },
             {
-              "SampleName":"SetMinMaxScale",
-              "Path":"Samples/Map/SetMinMaxScale"
+              "SampleName": "SetMinMaxScale",
+              "Path": "Samples/Map/SetMinMaxScale"
             },
             {
-              "SampleName":"AccessLoadStatus",
-              "Path":"Samples/Map/AccessLoadStatus"
+              "SampleName": "AccessLoadStatus",
+              "Path": "Samples/Map/AccessLoadStatus"
             },
             {
-              "SampleName":"SetInitialMapLocation",
-              "Path":"Samples/Map/SetInitialMapLocation"
+              "SampleName": "SetInitialMapLocation",
+              "Path": "Samples/Map/SetInitialMapLocation"
             },
             {
-              "SampleName":"SetInitialMapArea",
-              "Path":"Samples/Map/SetInitialMapArea"
+              "SampleName": "SetInitialMapArea",
+              "Path": "Samples/Map/SetInitialMapArea"
             },
             {
               "SampleName": "SetMapSpatialReference",
               "Path": "Samples/Map/SetMapSpatialReference"
             },
             {
-              "SampleName":"ChangeBasemap",
-              "Path":"Samples/Map/ChangeBasemap"
+              "SampleName": "ChangeBasemap",
+              "Path": "Samples/Map/ChangeBasemap"
             },
             {
-              "SampleName":"ManageBookmarks",
-              "Path":"Samples/Map/ManageBookmarks"
+              "SampleName": "ManageBookmarks",
+              "Path": "Samples/Map/ManageBookmarks"
             }
           ]
         }
