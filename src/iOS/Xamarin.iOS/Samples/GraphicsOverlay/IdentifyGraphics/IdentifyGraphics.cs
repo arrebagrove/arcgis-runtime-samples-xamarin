@@ -11,6 +11,7 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
+using Esri.ArcGISRuntime.UI.Controls;
 using Foundation;
 using System.Collections.Generic;
 using UIKit;
@@ -97,6 +98,7 @@ namespace ArcGISRuntimeXamarin.Samples.IdentifyGraphics
                 _polygonOverlay, 
                 e.Position, 
                 tolerance, 
+                Esri.ArcGISRuntime.Data.IdentifyReturns.GeoElementsOnly,
                 maximumResults);
 
             // Check if we got results

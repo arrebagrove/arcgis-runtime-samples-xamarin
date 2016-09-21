@@ -50,13 +50,13 @@ namespace ArcGISRuntimeXamarin.Samples.DisplayDrawingStatus
             myMapView.Map = myMap;
         }
 
-        private void OnDrawStatusChanged(object sender, DrawStatus e)
+        private void OnDrawStatusChanged(object sender, DrawStatusChangedEventArgs e)
         {
             // Make sure that the UI changes are done in the UI thread
             Device.BeginInvokeOnMainThread(() =>
             {
                 // Show the activity indicator if the map is drawing
-                if (e == DrawStatus.InProgress)
+                if (e.Status == DrawStatus.InProgress)
                 {
                     activityIndicator.IsRunning = true;
                 }

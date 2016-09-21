@@ -91,7 +91,9 @@ namespace ArcGISRuntimeXamarin.Samples.IdentifyGraphics
             IReadOnlyList<Graphic> identifyResults = await MyMapView.IdentifyGraphicsOverlayAsync(
                 _polygonOverlay, 
                 e.Position, 
-                tolerance, maximumResults);
+                tolerance,
+                Esri.ArcGISRuntime.Data.IdentifyReturns.GeoElementsOnly,
+                maximumResults);
            
             // Check if we got results
             if (identifyResults.Count > 0)
